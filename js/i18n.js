@@ -10,10 +10,12 @@
   var AMEN = {
     en: { wifi: "Fast Wi-Fi", desk: "Workspace", ac: "Air conditioning", parking: "Parking",
           washer: "Washer", lift: "Lift", heating: "Heating", kitchen: "Equipped kitchen",
-          terrace: "Terrace" },
+          terrace: "Terrace", balcony: "Balcony", dishwasher: "Dishwasher", tv: "TV",
+          microwave: "Microwave", oven: "Oven" },
     es: { wifi: "Wifi rápido", desk: "Zona de trabajo", ac: "Aire acondicionado", parking: "Parking",
           washer: "Lavadora", lift: "Ascensor", heating: "Calefacción", kitchen: "Cocina equipada",
-          terrace: "Terraza" }
+          terrace: "Terraza", balcony: "Balcón", dishwasher: "Lavavajillas", tv: "TV",
+          microwave: "Microondas", oven: "Horno" }
   };
 
   var GUEST = {
@@ -36,8 +38,8 @@
       whatsInside: "WHAT'S INSIDE", reserve: "Reserve →", allInShort: "all-in",
       allInLong: "all-in · deposit refundable", freeCancel: "Free cancellation up to 48h before check-in",
       photosWord: "photos", months: "1–12 months", guests: "guests", bedOne: "bedroom", bedMany: "bedrooms", studio: "studio",
-      examples: ["3 of us in Movera, under €1,400", "Furnished flat near the university", "Team move-in for July"],
-      chips: ["Cheaper", "Near the university", "Add a bedroom", "Available in July"],
+      examples: ["3 of us in Movera, under €1,400", "A furnished 3-bed, room by room", "Team move-in for July"],
+      chips: ["Cheaper", "3 bedrooms", "Room by room", "Available in July"],
       ownerChips: ["What's your fee?", "How fast can it list?", "Which neighbourhoods?"],
       reserveChips: ["Book a viewing first", "See the contract", "Start another search"],
       fallbackChips: ["Raise budget to €1,600", "Any neighbourhood", "Start over"],
@@ -72,8 +74,8 @@
       whatsInside: "QUÉ INCLUYE", reserve: "Reservar →", allInShort: "todo incl.",
       allInLong: "todo incluido · fianza reembolsable", freeCancel: "Cancelación gratis hasta 48 h antes de la entrada",
       photosWord: "fotos", months: "1–12 meses", guests: "huéspedes", bedOne: "dormitorio", bedMany: "dormitorios", studio: "estudio",
-      examples: ["3 personas en Movera, menos de 1.400 €", "Piso amueblado cerca de la universidad", "Entrada de equipo para julio"],
-      chips: ["Más barato", "Cerca de la universidad", "Otra habitación", "Disponible en julio"],
+      examples: ["3 personas en Movera, menos de 1.400 €", "Un 3 dormitorios amueblado, por habitaciones", "Entrada de equipo para julio"],
+      chips: ["Más barato", "3 dormitorios", "Por habitaciones", "Disponible en julio"],
       ownerChips: ["¿Cuál es vuestra comisión?", "¿Cuánto tarda en publicarse?", "¿En qué barrios?"],
       reserveChips: ["Ver primero una visita", "Ver el contrato", "Empezar otra búsqueda"],
       fallbackChips: ["Subir a 1.600 €", "Cualquier barrio", "Empezar de nuevo"],
@@ -110,6 +112,7 @@
       placeholderEmpty: "e.g. furnished 2-bed near the university, with a lift…",
       placeholderRefine: "Refine it — add another flat, ask about the fee or timeline…",
       examples: ["Furnished 2-bed near the university", "3-bed in Movera, room by room", "Studio in Centro"],
+      estTail: "Here's what zero-touch hosting could pay you — you just add your IBAN once.",
       estLabel: "ESTIMATED NET PAYOUT", per: "/ mo", iban: "paid to your IBAN after each stay",
       occL: "occupancy", effortL: "your effort", handleL: "WE HANDLE EVERYTHING",
       handles: ["Photos & listing", "Dynamic pricing", "Guest vetting", "Season contract", "Rent & deposit", "Check-in & keys", "Cleaning & turnover", "Support", "Payouts to your IBAN"],
@@ -149,6 +152,7 @@
       placeholderEmpty: "p. ej. piso de 2 dormitorios amueblado cerca de la universidad, con ascensor…",
       placeholderRefine: "Ajusta — añade otra vivienda, pregunta por la comisión o los plazos…",
       examples: ["2 dormitorios amueblado cerca de la universidad", "3 dormitorios en Movera, por habitaciones", "Estudio en el Centro"],
+      estTail: "Esto es lo que podría pagarte la gestión sin esfuerzo — solo añades tu IBAN una vez.",
       estLabel: "PAGO NETO ESTIMADO", per: "/ mes", iban: "a tu IBAN tras cada estancia",
       occL: "ocupación", effortL: "tu esfuerzo", handleL: "NOS ENCARGAMOS DE TODO",
       handles: ["Fotos y anuncio", "Precio dinámico", "Verificación de huéspedes", "Contrato de temporada", "Renta y fianza", "Entrada y llaves", "Limpieza y turnover", "Soporte", "Pagos a tu IBAN"],

@@ -163,7 +163,12 @@
     this.set({ theme: nt });
   };
 
-  /* ---------- send loop ---------- */
+  /* ---------- send loop ----------
+     The user's plain-language message is parsed by DeepSeek (the
+     conversational-search edge function) into a structured intent; the answer
+     is then built against the REAL inventory using that intent. If DeepSeek is
+     unreachable, aiParse resolves null and we fall back to the local matcher,
+     so the conversation always works. */
   App.prototype.send = function (text) {
     var v = (text != null ? text : this.draft).trim();
     if (!v) return;
@@ -173,14 +178,23 @@
     try { localStorage.removeItem(this.K.draft); } catch (e) {}
     this._needDockFocus = true;
     this.set({ messages: msgs, started: true });
-    var res = this.mode === "host" ? this.buildReply(v) : this.buildResults(this.context);
+
     var self = this;
-    this.timers.push(setTimeout(function () {
-      var m2 = self.state.messages.slice();
-      if (self.mode === "host") m2[m2.length - 1] = { role: "system", summary: res.summary, est: res.est || null, chips: res.chips };
-      else m2[m2.length - 1] = { role: "system", summary: res.summary, results: res.results, chips: res.chips };
-      self.set({ messages: m2 });
-    }, 950));
+    var query = this.mode === "host" ? v : this.context;
+    var started = Date.now();
+    var lang = this.state.lang;
+    var parse = (DATA.aiParse ? DATA.aiParse(this.mode, query, lang) : Promise.resolve(null));
+    parse.then(function (parsed) {
+      var wait = Math.max(0, 650 - (Date.now() - started)); // let the thinking dots breathe
+      self.timers.push(setTimeout(function () {
+        var m2 = self.state.messages.slice();
+        if (!m2.length || !m2[m2.length - 1].thinking) return; // superseded (e.g. reset)
+        var res = self.mode === "host" ? self.buildReply(query, parsed) : self.buildResults(query, parsed);
+        if (self.mode === "host") m2[m2.length - 1] = { role: "system", summary: res.summary, est: res.est || null, chips: res.chips };
+        else m2[m2.length - 1] = { role: "system", summary: res.summary, results: res.results, chips: res.chips };
+        self.set({ messages: m2 });
+      }, wait));
+    });
   };
 
   App.prototype.reset = function () {
@@ -205,40 +219,65 @@
     var photos = h.photos || [];
     return {
       title: this.L(h.name), hood: this.L(h.hood), price: h.priceLabel, meta: this.metaShort(h),
-      ref: h.ref, blurb: this.L(h.about) || this.L(h.blurb), cta: t.reserve, allIn: t.allInShort,
+      ref: h.ref, blurb: this.L(h.blurb) || this.L(h.about), cta: t.reserve, allIn: t.allInShort,
       hasImg: photos.length > 0, img: photos[0] || null, photos: photos, photoCount: photos.length + " " + t.photosWord,
       mapX: h.x, mapY: h.y, pinPrice: h.pinPrice, home: h,
       priceNote: h.priceNote ? this.L(h.priceNote) : null
     };
   };
-  App.prototype.buildResults = function (q) {
-    var t = this.t();
-    var s = q.toLowerCase().replace(/(\d)[.,  ](\d{3})/g, "$1$2");
-    if (/(own|owner|landlord|my (flat|home|apartment|piso)|rent out|list my|i have a (flat|piso|place)|tengo un piso|propietario|soy due|alquilar mi|mi vivienda)/.test(s)) {
+// Hood keyword -> inventory tag matcher (shared by the AI + regex paths).
+  var HOOD_TAG = {
+    movera: /movera/, universidad: /universidad|pedro|university/, ebro: /ebro|river/,
+    pilar: /pilar|centro/, tubo: /tubo|casco/, fuentes: /fuentes/, centro: /centro/
+  };
+
+  // Parse a guest query into a structured intent — from DeepSeek when available,
+  // otherwise from the local regex matcher (offline fallback).
+  App.prototype.guestIntent = function (q, parsed) {
+    if (parsed && parsed.intent) {
+      var pi = parsed.intent;
+      var b = (typeof pi.budget === "number") ? pi.budget : null;
+      if (pi.cheaper) b = b ? Math.min(b, 1200) : 1200;
+      return { owner: !!pi.owner, budget: b, guests: pi.guests || null, beds: pi.beds || null,
+        parking: !!pi.parking, hood: pi.neighbourhood || null, ai: true };
+    }
+    var s = q.toLowerCase().replace(/(\d)[.,\u00a0 ](\d{3})/g, "$1$2");
+    var intent = { owner: false, budget: null, guests: null, beds: null, parking: false, hood: null, ai: false };
+    if (/(own|owner|landlord|my (flat|home|apartment|piso)|rent out|list my|i have a (flat|piso|place)|tengo un piso|propietario|soy due|alquilar mi|mi vivienda)/.test(s)) intent.owner = true;
+    var bud = s.match(/(?:under|max|below|menos de|máximo|maximo|hasta|up to|<)\s*€?\s*(\d{3,4})/) || s.match(/€\s*(\d{3,4})/) || s.match(/(\d{3,4})\s*(?:€|eur|\/?\s*mo|a month|month|mes)/);
+    if (bud) intent.budget = parseInt(bud[1], 10);
+    if (/cheap|cheaper|lower|less|budget|afford|barat|económic|economic/.test(s)) intent.budget = intent.budget ? Math.min(intent.budget, 1200) : 1200;
+    var g = s.match(/(\d+)\s*(?:of us|people|guests|adults|persons|personas|huéspedes|huespedes)/) || s.match(/(?:team of|equipo de)\s*(\d+)/);
+    if (g) intent.guests = parseInt(g[1], 10);
+    if (/2 ?-?bed|two ?-?bed|bedrooms|2 bedroom|2 dormitorio|dos dormitorio|dormitorios|3 ?-?bed|three ?-?bed/.test(s)) intent.beds = 2;
+    if (/movera/.test(s)) intent.hood = "movera";
+    else if (/universi|pedro|university/.test(s)) intent.hood = "universidad";
+    else if (/ebro|river|r[ií]o|riverside|junto al r/.test(s)) intent.hood = "ebro";
+    else if (/pilar|bas[ií]lica/.test(s)) intent.hood = "pilar";
+    else if (/tubo|old ?town|casco/.test(s)) intent.hood = "tubo";
+    else if (/fuentes/.test(s)) intent.hood = "fuentes";
+    else if (/centr|gran ?v[ií]a|downtown/.test(s)) intent.hood = "centro";
+    if (/parking|car|garage|coche|aparcamiento/.test(s)) intent.parking = true;
+    return intent;
+  };
+
+  App.prototype.buildResults = function (q, parsed) {
+    var t = this.t(), self = this;
+    var intent = this.guestIntent(q, parsed);
+    if (intent.owner) {
       return {
-        summary: t.ownerSummary,
+        summary: (parsed && parsed.summary) || t.ownerSummary,
         results: [{ title: t.ownerTitle, hood: "Zaragoza", price: "~€1,150/mo", meta: t.ownerNet, ref: "EST-ZGZ-01", blurb: t.ownerBlurb, cta: t.ownerCta, hasImg: false }],
         chips: t.ownerChips
       };
     }
     var pool = this.homes.slice();
-    var budget = null;
-    var bud = s.match(/(?:under|max|below|menos de|máximo|maximo|hasta|up to|<)\s*€?\s*(\d{3,4})/) || s.match(/€\s*(\d{3,4})/) || s.match(/(\d{3,4})\s*(?:€|eur|\/?\s*mo|a month|month|mes)/);
-    if (bud) budget = parseInt(bud[1], 10);
-    if (/cheap|cheaper|lower|less|budget|afford|barat|económic|economic/.test(s)) budget = budget ? Math.min(budget, 1200) : 1200;
-    if (budget) pool = pool.filter(function (h) { return h.priceN <= budget; });
-    var g = s.match(/(\d+)\s*(?:of us|people|guests|adults|persons|personas|huéspedes|huespedes)/) || s.match(/(?:team of|equipo de)\s*(\d+)/);
-    if (g) { var n = parseInt(g[1], 10); pool = pool.filter(function (h) { return h.guests >= n; }); }
-    if (/2 ?-?bed|two ?-?bed|bedrooms|2 bedroom|2 dormitorio|dos dormitorio|dormitorios|3 ?-?bed|three ?-?bed/.test(s)) pool = pool.filter(function (h) { return h.beds >= 2; });
-    if (/movera/.test(s)) pool = pool.filter(function (h) { return /movera/.test(h.tags); });
-    if (/universi|pedro|university/.test(s)) pool = pool.filter(function (h) { return /universidad|pedro|university/.test(h.tags); });
-    if (/ebro|river|r[ií]o|riverside|junto al r/.test(s)) pool = pool.filter(function (h) { return /ebro|river/.test(h.tags); });
-    if (/pilar|bas[ií]lica/.test(s)) pool = pool.filter(function (h) { return /pilar|centro/.test(h.tags); });
-    if (/tubo|old ?town|casco/.test(s)) pool = pool.filter(function (h) { return /tubo|casco/.test(h.tags); });
-    if (/fuentes/.test(s)) pool = pool.filter(function (h) { return /fuentes/.test(h.tags); });
-    if (/parking|car|garage|coche|aparcamiento/.test(s)) pool = pool.filter(function (h) { return (h.amen || []).indexOf("parking") >= 0; });
+    if (intent.budget) pool = pool.filter(function (h) { return h.priceN <= intent.budget; });
+    if (intent.guests) pool = pool.filter(function (h) { return h.guests >= intent.guests; });
+    if (intent.beds) pool = pool.filter(function (h) { return h.beds >= intent.beds; });
+    if (intent.hood && HOOD_TAG[intent.hood]) pool = pool.filter(function (h) { return HOOD_TAG[intent.hood].test(h.tags); });
+    if (intent.parking) pool = pool.filter(function (h) { return (h.amen || []).indexOf("parking") >= 0; });
     pool.sort(function (a, b) { return a.priceN - b.priceN; });
-    var self = this;
     if (!pool.length) {
       return {
         summary: t.fallbackSummary,
@@ -247,9 +286,13 @@
       };
     }
     var top = pool.slice(0, 3);
-    return { summary: t.searchSummary(top.length, budget), results: top.map(function (h) { return self.card(h); }), chips: t.chips };
+    return {
+      summary: (parsed && parsed.summary) || t.searchSummary(top.length, intent.budget),
+      results: top.map(function (h) { return self.card(h); }),
+      chips: t.chips
+    };
   };
-  App.prototype.reserve = function (r) {
+    App.prototype.reserve = function (r) {
     var t = this.t();
     var msgs = this.state.messages.concat([{ role: "system", summary: t.reserveConfirm(r.ref), results: [], chips: t.reserveChips, contact: { ref: r.ref, title: r.title } }]);
     var patch = { messages: msgs };
@@ -260,22 +303,43 @@
   App.prototype.mailReserveUrl = function (c) { var t = this.t(); return "mailto:" + CONTACT.email + "?subject=" + encodeURIComponent(t.mailSubject(c.ref)) + "&body=" + encodeURIComponent(t.waReserve(c.ref, c.title)); };
 
   /* ================= HOST logic ================= */
-  App.prototype.estimate = function (q) {
+// Parse a host query into intent — DeepSeek when available, else regex.
+  App.prototype.hostIntent = function (q, parsed) {
+    if (parsed && parsed.intent) {
+      var pi = parsed.intent;
+      return { question: (pi.question === "fee" || pi.question === "timeline") ? pi.question : null,
+        beds: (typeof pi.beds === "number") ? pi.beds : null, parking: !!pi.parking,
+        renovated: !!pi.renovated, hood: pi.neighbourhood || null, property: (pi.beds != null || pi.neighbourhood || pi.parking || pi.renovated), ai: true };
+    }
+    var s = q.toLowerCase();
+    if (/fee|comisi|cost|coste|precio|charge|cobr[aá]/.test(s)) return { question: "fee", property: false, ai: false };
+    if (/fast|time|when|tarda|plazo|cu[aá]nto tarda|how long|quick/.test(s)) return { question: "timeline", property: false, ai: false };
+    var beds = null, hood = null;
+    if (/studio|estudio/.test(s)) beds = 0;
+    else if (/\b3\b|three|tres|3 ?-?bed|3 dormitorio/.test(s)) beds = 3;
+    else if (/\b2\b|two|dos|2 ?-?bed|2 dormitorio/.test(s)) beds = 2;
+    else if (/\b1\b|one|un |uno|1 ?-?bed|1 dormitorio/.test(s)) beds = 1;
+    if (/centro|gran ?v[ií]a|pilar|tubo|casco|universi|pedro/.test(s)) hood = "centro";
+    else if (/ebro|river|r[ií]o|arrabal/.test(s)) hood = "ebro";
+    else if (/movera|fuentes/.test(s)) hood = "movera";
+    var parking = /parking|garaje|garage/.test(s);
+    var renovated = /renov|reform|new|nuevo|lift|ascensor|terrace|terraza/.test(s);
+    var property = /(2|3|1|studio|estudio|bed|dormitorio|flat|piso|apartment|near|junto|centro|fuentes|ebro|pilar|tubo|movera|universi|pedro|parking|renov|reform|lift|ascensor)/.test(s);
+    return { question: null, beds: beds, parking: parking, renovated: renovated, hood: hood, property: property, ai: false };
+  };
+
+  App.prototype.estimateFromIntent = function (intent) {
     var t = this.t();
-    var s = q.toLowerCase().replace(/(\d)[.,  ](\d{3})/g, "$1$2");
-    var beds = 1, areaKey = "one";
-    if (/studio|estudio/.test(s)) { beds = 0; areaKey = "studio"; }
-    else if (/\b3\b|three|tres|3 ?-?bed|3 dormitorio/.test(s)) { beds = 3; areaKey = "three"; }
-    else if (/\b2\b|two|dos|2 ?-?bed|2 dormitorio/.test(s)) { beds = 2; areaKey = "two"; }
-    else if (/\b1\b|one|un |uno|1 ?-?bed|1 dormitorio/.test(s)) { beds = 1; areaKey = "one"; }
+    var beds = (typeof intent.beds === "number") ? Math.max(0, Math.min(3, intent.beds)) : 1;
+    var areaKey = ["studio", "one", "two", "three"][beds] || "one";
     var base = [900, 1150, 1450, 1750][beds] || 1150;
     var mult = 1.0, occ = 90;
-    if (/centro|gran ?v[ií]a|pilar|tubo|casco|universi|pedro/.test(s)) { mult = 1.12; occ = 93; }
-    else if (/ebro|river|r[ií]o|arrabal/.test(s)) { mult = 1.08; occ = 92; }
-    else if (/movera|fuentes/.test(s)) { mult = 0.96; occ = 89; }
+    if (intent.hood === "centro" || intent.hood === "pilar" || intent.hood === "tubo" || intent.hood === "universidad") { mult = 1.12; occ = 93; }
+    else if (intent.hood === "ebro") { mult = 1.08; occ = 92; }
+    else if (intent.hood === "movera" || intent.hood === "fuentes") { mult = 0.96; occ = 89; }
     var bonus = 0;
-    if (/parking|garaje|garage/.test(s)) bonus += 40;
-    if (/renov|reform|new|nuevo|lift|ascensor|terrace|terraza/.test(s)) bonus += 60;
+    if (intent.parking) bonus += 40;
+    if (intent.renovated) bonus += 60;
     var net = Math.round((base * mult * 0.84 + bonus) / 10) * 10;
     var area = t.areaWords[areaKey] || t.areaWords.flat;
     return {
@@ -285,18 +349,19 @@
       ref: "EBR-" + (1000 + beds * 1000 + (occ % 100)) + "-ZGZ"
     };
   };
-  App.prototype.buildReply = function (q) {
+
+  App.prototype.buildReply = function (q, parsed) {
     var t = this.t();
-    var s = q.toLowerCase();
-    if (/fee|comisi|cost|coste|precio|charge|cobr[aá]/.test(s)) return { summary: t.feeReply, chips: t.startedChips };
-    if (/fast|time|when|tarda|plazo|cu[aá]nto tarda|how long|quick/.test(s)) return { summary: t.timelineReply, chips: t.startedChips };
-    if (/(2|3|1|studio|estudio|bed|dormitorio|flat|piso|apartment|near|junto|centro|fuentes|ebro|pilar|tubo|movera|universi|pedro|parking|renov|reform|lift|ascensor)/.test(s)) {
-      var est = this.estimate(q);
-      return { summary: est.summary, est: est, chips: t.chips };
+    var intent = this.hostIntent(q, parsed);
+    if (intent.question === "fee") return { summary: t.feeReply, chips: t.startedChips };
+    if (intent.question === "timeline") return { summary: t.timelineReply, chips: t.startedChips };
+    if (intent.property) {
+      var est = this.estimateFromIntent(intent);
+      return { summary: (parsed && parsed.summary) ? (parsed.summary + " " + t.estTail) : est.summary, est: est, chips: t.chips };
     }
-    return { summary: t.genericReply, chips: t.chips };
+    return { summary: (parsed && parsed.summary) || t.genericReply, chips: t.chips };
   };
-  App.prototype.startHosting = function (est) {
+    App.prototype.startHosting = function (est) {
     var t = this.t();
     var msgs = this.state.messages.concat([{ role: "system", summary: t.stepsSummary, steps: t.steps, chips: t.startedChips, contact: true }]);
     var patch = { messages: msgs };
@@ -548,8 +613,16 @@
     map.innerHTML =
       '<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M -6 16 C 24 30 44 26 66 42 C 82 53 94 56 106 54" fill="none" stroke="#9cc4f0" stroke-width="11" stroke-linecap="round" opacity="0.5"></path><path d="M 20 0 L 34 100 M 60 0 L 52 100 M 0 74 L 100 84" stroke="var(--border-default)" stroke-width="0.8" opacity="0.7"></path></svg>' +
       '<div class="ebr-map-label">ZARAGOZA · RÍO EBRO</div>';
+    // Nudge pins apart when homes share almost the same coordinates so the
+    // price tags don't stack on top of each other.
+    var placed = [];
     pins.forEach(function (r) {
-      var pin = el("div", { class: "ebr-pin", style: "left:" + r.mapX + "%;top:" + r.mapY + "%" }, [
+      var x = r.mapX, y = r.mapY, tries = 0;
+      while (tries < 8 && placed.some(function (p) { return Math.abs(p.x - x) < 9 && Math.abs(p.y - y) < 7; })) {
+        x = Math.max(8, Math.min(92, x + 10)); y = Math.max(10, y - 6); tries++;
+      }
+      placed.push({ x: x, y: y });
+      var pin = el("div", { class: "ebr-pin", style: "left:" + x + "%;top:" + y + "%" }, [
         el("div", { class: "pill", text: r.pinPrice }), el("div", { class: "stem" })
       ]);
       map.appendChild(pin);

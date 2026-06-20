@@ -35,44 +35,6 @@
 
   var HOMES = [
     home({
-      id: "pedro1", ref: "EBR-PED1-ZGZ",
-      lat: 41.65393, lng: -0.90783,
-      name: { es: "Pedro II el Católico 3 · 1º IZQ", en: "Pedro II el Católico 3 · 1st left" },
-      hood: { es: "Universidad · Pedro II el Católico", en: "University · Pedro II el Católico" },
-      priceN: 950, guests: 4, beds: 2, rating: 4.8,
-      availableFrom: "2026-07-01",
-      tags: "universidad pedro centro university",
-      amen: ["wifi", "desk", "lift", "heating", "kitchen"],
-      photos: [],
-      blurb: {
-        es: "Piso amueblado en Pedro II el Católico 3, preparado para estancias de media duración en Zaragoza.",
-        en: "Furnished flat at Pedro II el Católico 3, prepared for medium-stay rentals in Zaragoza."
-      },
-      about: {
-        es: "Primero izquierda en una ubicación urbana y bien comunicada, con cocina equipada, zona de trabajo y gestión local Ebrostay. A un paso de la Universidad y del centro.",
-        en: "First-floor left in a connected urban location, with an equipped kitchen, a work area and local Ebrostay management. A short walk from the University and the centre."
-      }
-    }),
-    home({
-      id: "pedro2", ref: "EBR-PED2-ZGZ",
-      lat: 41.65416, lng: -0.90756,
-      name: { es: "Pedro II el Católico 3 · 2º IZQ", en: "Pedro II el Católico 3 · 2nd left" },
-      hood: { es: "Universidad · Pedro II el Católico", en: "University · Pedro II el Católico" },
-      priceN: 980, guests: 4, beds: 2, rating: 4.7,
-      availableFrom: "2026-07-10",
-      tags: "universidad pedro centro university",
-      amen: ["wifi", "desk", "lift", "heating", "kitchen", "ac"],
-      photos: [],
-      blurb: {
-        es: "Segundo izquierda en el mismo edificio, una opción práctica para profesionales, estudiantes o traslados temporales.",
-        en: "Second-floor left in the same building, a practical option for professionals, students or temporary relocations."
-      },
-      about: {
-        es: "Vivienda amueblada con distribución funcional, wifi, calefacción, aire acondicionado y soporte local para la llegada y la estancia.",
-        en: "Furnished home with a functional layout, wifi, heating, air conditioning and local support for arrival and stay."
-      }
-    }),
-    home({
       id: "movera0", ref: "EBR-MOV2-ZGZ",
       lat: 41.64929, lng: -0.82209,
       name: { es: "Movera 7 · Segunda Planta", en: "Movera 7 · Second Floor" },
@@ -145,9 +107,8 @@
   function loadLiveHomes() {
     return new Promise(function (resolve) {
       try {
-        var url = window.EBR_SUPABASE_URL, key = window.EBR_SUPABASE_ANON_KEY;
-        if (!url || !key || !window.supabase || !window.supabase.createClient) return resolve(null);
-        var client = window.supabase.createClient(url, key);
+        var client = getClient();
+        if (!client) return resolve(null);
         var timed = false;
         var to = setTimeout(function () { timed = true; resolve(null); }, 6000);
         client
@@ -189,5 +150,39 @@
     });
   }
 
-  window.EBR_DATA = { HOMES: HOMES, loadLiveHomes: loadLiveHomes, project: project };
+  /* ---- Shared Supabase client ---- */
+  var _client;
+  function getClient() {
+    if (_client !== undefined) return _client;
+    try {
+      var url = window.EBR_SUPABASE_URL, key = window.EBR_SUPABASE_ANON_KEY;
+      _client = (url && key && window.supabase && window.supabase.createClient)
+        ? window.supabase.createClient(url, key) : null;
+    } catch (e) { _client = null; }
+    return _client;
+  }
+
+  /* ---- DeepSeek-powered query parsing ----------------------------------
+     Calls the `conversational-search` Edge Function (DeepSeek, model
+     deepseek-v4-pro) to turn the visitor's free text into a structured intent
+     + a natural summary. Resolves null on any failure / timeout so the client
+     can fall back to its local matcher. */
+  function aiParse(mode, query, lang) {
+    return new Promise(function (resolve) {
+      try {
+        var c = getClient();
+        if (!c || !c.functions || !query) { resolve(null); return; }
+        var done = false;
+        var to = setTimeout(function () { if (!done) { done = true; resolve(null); } }, 13000);
+        c.functions.invoke("conversational-search", { body: { mode: mode, query: query, lang: lang } })
+          .then(function (r) {
+            if (done) return; done = true; clearTimeout(to);
+            if (r && !r.error && r.data && r.data.intent) resolve(r.data);
+            else resolve(null);
+          }, function () { if (!done) { done = true; clearTimeout(to); resolve(null); } });
+      } catch (e) { resolve(null); }
+    });
+  }
+
+  window.EBR_DATA = { HOMES: HOMES, loadLiveHomes: loadLiveHomes, aiParse: aiParse, getClient: getClient, project: project };
 })();

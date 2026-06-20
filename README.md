@@ -70,18 +70,28 @@ auto-scroll, `localStorage` persistence of the conversation, draft, theme and la
 reserve / start-hosting flows, and the phone-as-identity account popover (3 stages:
 phone → code → signed-in, with per-number saved stays / listings).
 
+### Conversational search — DeepSeek
+
+Every search/parse goes through **DeepSeek** (model `deepseek-v4-pro`, the same
+model the production property editor uses). The Supabase Edge Function
+`conversational-search` turns a visitor's plain sentence into a structured intent
+(budget, guests, bedrooms, neighbourhood, parking, owner-intent — or, for hosts,
+size/area/renovated/fee-or-timeline question) plus a natural one-line reply in the
+user's language. The website then filters the **real published inventory** with that
+intent, so results stay grounded in real homes — the model never invents listings or
+prices. If DeepSeek is unreachable, the client falls back to a local regex matcher so
+the conversation always works. (`js/data.js` → `aiParse()` → the edge function;
+`js/app.js` → `guestIntent()` / `hostIntent()` consume it, with a regex fallback.)
+
 ### Prototype boundaries — what to make real
 
 The phone identity and saved stays are a **client-side prototype** (`localStorage`,
-keyed by phone number). Three contained integrations make it production-real without
+keyed by phone number). Two contained integrations make them production-real without
 changing the UI:
 
 1. **Messaging** — Twilio / WhatsApp Business API to send the real 6-digit code.
 2. **Datastore** — the Supabase tables already backing `ebrostay.com` (bookings,
    listings) keyed by phone number, replacing the namespaced `localStorage` records.
-3. **Search / pricing** — the in-memory matcher and the estimate formula are stand-ins
-   for the real availability + dynamic-pricing endpoints; the live `properties` fetch
-   is already wired.
 
 The WhatsApp / email deep links need no backend and stay as the lowest-friction channel.
 
