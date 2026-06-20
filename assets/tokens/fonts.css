@@ -1,0 +1,5 @@
+/* Ebrostay webfonts — loaded from Google Fonts.
+   NOTE: Loaded via CDN @import rather than self-hosted .woff2 binaries.
+   See readme.md "Typography" — flag to replace with self-hosted files for production. */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');

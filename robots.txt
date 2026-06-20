@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# AI assistants are welcome — this site is built to be talked to.
+User-agent: GPTBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://ebrostay.com/sitemap.xml

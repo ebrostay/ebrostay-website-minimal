@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ebrostay — Where to in Zaragoza?</title>
+  <meta name="description" content="Tell us the mid-stay home you need in Zaragoza, in plain words. Verified furnished homes, all-in pricing, refundable deposit — reserve in one tap.">
+  <link rel="canonical" href="https://ebrostay.com/">
+  <meta name="theme-color" content="#1f8a57">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/ebrostay-icon-180.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ebrostay — mid-stay homes in Zaragoza">
+  <meta property="og:description" content="Describe your stay; get matched homes. One conversational input — no filters, no forms.">
+  <meta property="og:image" content="assets/ebrostay-og.jpg">
+  <meta property="og:url" content="https://ebrostay.com/">
+
+  <link rel="stylesheet" href="assets/tokens/fonts.css">
+  <link rel="stylesheet" href="assets/tokens/colors.css">
+  <link rel="stylesheet" href="assets/tokens/typography.css">
+  <link rel="stylesheet" href="assets/tokens/spacing.css">
+  <link rel="stylesheet" href="assets/tokens/utilities.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script>
+    // Apply persisted theme before paint to avoid a flash.
+    try { var th = localStorage.getItem('ebrostay-theme'); if (th === 'dark' || th === 'light') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+  </script>
+</head>
+<body>
+  <div id="ebr-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>window.EBR_MODE = 'guest'; window.EBR_BOOT('guest');</script>
+</body>
+</html>

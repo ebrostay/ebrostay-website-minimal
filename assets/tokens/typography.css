@@ -1,0 +1,58 @@
+/* ============================================================
+   EBROSTAY — TYPOGRAPHY TOKENS
+   Display: Bricolage Grotesque (warm, distinctive headlines)
+   UI/Body: Hanken Grotesque (clean, neutral workhorse)
+   Mono:    JetBrains Mono (booking refs, codes, prices in tables)
+   ============================================================ */
+
+:root {
+  /* Families */
+  --font-display: "Bricolage Grotesque", "Hanken Grotesque", system-ui, sans-serif;
+  --font-sans:    "Hanken Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale — fixed steps for UI text */
+  --text-xs:   0.75rem;   /* 12 */
+  --text-sm:   0.875rem;  /* 14 */
+  --text-base: 1rem;      /* 16 */
+  --text-md:   1.125rem;  /* 18 */
+  --text-lg:   1.3125rem; /* 21 */
+  --text-xl:   1.625rem;  /* 26 */
+
+  /* Display scale — FLUID. Scales with the viewport between a
+     phone min and a desktop max, so headlines feel right everywhere. */
+  --text-2xl:  clamp(1.625rem, calc(1.30rem + 1.6vw), 2rem);     /* 26 → 32 */
+  --text-3xl:  clamp(2rem,     calc(1.55rem + 2.2vw), 2.5rem);   /* 32 → 40 */
+  --text-4xl:  clamp(2.375rem, calc(1.70rem + 3.3vw), 3.125rem); /* 38 → 50 */
+  --text-5xl:  clamp(2.75rem,  calc(1.85rem + 4.4vw), 3.875rem); /* 44 → 62 */
+  --text-6xl:  clamp(3.25rem,  calc(2.00rem + 6.0vw), 4.75rem);  /* 52 → 76 */
+
+  /* Weights */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-extra:    800;
+
+  /* Semantic weight roles — the system runs LIGHT.
+     Display & headings sit at 600, not 700/800, for a modern, airy voice.
+     Use these aliases rather than raw numbers. */
+  --weight-display:  600;
+  --weight-heading:  600;
+  --weight-emphasis: 600;
+  --weight-body:     400;
+  --weight-strong:   700;  /* reserve for rare, deliberate accents */
+
+  /* Line heights */
+  --leading-tight:   1.08;
+  --leading-snug:    1.22;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  /* Letter spacing */
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.02em;
+  --tracking-caps:   0.08em;  /* uppercase eyebrows */
+}

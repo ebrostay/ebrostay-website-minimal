@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ebrostay for hosts — What could your flat earn?</title>
+  <meta name="description" content="Tell us about your Zaragoza flat and get an instant net-payout estimate. Zero-touch hosting: we list, price, vet, clean and pay you to your IBAN after each stay.">
+  <link rel="canonical" href="https://ebrostay.com/host.html">
+  <meta name="theme-color" content="#1f8a57">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/ebrostay-icon-180.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ebrostay for hosts — zero-touch management in Zaragoza">
+  <meta property="og:description" content="Describe your place; get an instant payout estimate. We handle everything; you just get paid.">
+  <meta property="og:image" content="assets/ebrostay-og.jpg">
+  <meta property="og:url" content="https://ebrostay.com/host.html">
+
+  <link rel="stylesheet" href="assets/tokens/fonts.css">
+  <link rel="stylesheet" href="assets/tokens/colors.css">
+  <link rel="stylesheet" href="assets/tokens/typography.css">
+  <link rel="stylesheet" href="assets/tokens/spacing.css">
+  <link rel="stylesheet" href="assets/tokens/utilities.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script>
+    try { var th = localStorage.getItem('ebrostay-theme'); if (th === 'dark' || th === 'light') document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+  </script>
+</head>
+<body>
+  <div id="ebr-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>window.EBR_MODE = 'host'; window.EBR_BOOT('host');</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+/* ============================================================
+   EBROSTAY — COLOR TOKENS
+   Mediterranean hospitality palette: fresh Ebro green primary,
+   warm terracotta/amber secondary, warm stone neutrals.
+   ============================================================ */
+
+:root {
+  /* ---- Brand green (primary) — trust, nature, the river ---- */
+  --green-50:  #ecf6ef;
+  --green-100: #d2ebda;
+  --green-200: #a6d6b8;
+  --green-300: #71bd91;
+  --green-400: #43a06f;
+  --green-500: #1f8a57;   /* brand */
+  --green-600: #157047;
+  --green-700: #115a3a;
+  --green-800: #0e4730;
+  --green-900: #0a3324;
+
+  /* ---- Terracotta / amber (secondary) — Aragón sun & brick ---- */
+  --clay-50:  #fdf3ec;
+  --clay-100: #fbe2d1;
+  --clay-200: #f6c2a1;
+  --clay-300: #ef9e6e;
+  --clay-400: #e87f45;
+  --clay-500: #d9632a;    /* accent */
+  --clay-600: #b84e20;
+  --clay-700: #93401f;
+  --clay-800: #6f331c;
+  --clay-900: #4a2414;
+
+  /* ---- Warm stone neutrals ---- */
+  --stone-0:   #ffffff;
+  --stone-50:  #faf9f6;
+  --stone-100: #f4f2ec;
+  --stone-200: #e8e4da;
+  --stone-300: #d6d0c3;
+  --stone-400: #aaa392;
+  --stone-500: #7d766a;
+  --stone-600: #5a544b;
+  --stone-700: #423d36;
+  --stone-800: #2a2722;
+  --stone-900: #1a1814;
+
+  /* ---- Raw semantic hues ---- */
+  --blue-500:   #2f74cc;
+  --blue-50:    #e9f1fb;
+  --amber-500:  #d99412;
+  --amber-50:   #fbf2dc;
+  --red-500:    #cf4040;
+  --red-50:     #fbeaea;
+
+  /* ============================================================
+     SEMANTIC ALIASES — use these in components, not raw scales
+     ============================================================ */
+
+  /* Text */
+  --text-strong:  var(--stone-900);
+  --text-body:    var(--stone-700);
+  --text-muted:   var(--stone-500);
+  --text-subtle:  var(--stone-400);
+  --text-inverse: var(--stone-0);
+  --text-brand:   var(--green-600);
+  --text-onbrand: #ffffff;
+
+  /* Surfaces */
+  --surface-page:    var(--stone-50);
+  --surface-card:    var(--stone-0);
+  --surface-raised:  var(--stone-0);
+  --surface-sunken:  var(--stone-100);
+  --surface-inverse: var(--green-900);
+  --surface-brand:   var(--green-500);
+  --surface-brand-soft: var(--green-50);
+  --surface-accent:  var(--clay-500);
+  --surface-accent-soft: var(--clay-50);
+
+  /* Glass — transparency / blur surfaces */
+  --glass-light:  rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --glass-dark:   rgba(20, 24, 20, 0.42);
+  --glass-blur:   16px;
+
+  /* Borders */
+  --border-subtle:  var(--stone-200);
+  --border-default: var(--stone-300);
+  --border-strong:  var(--stone-400);
+  --border-brand:   var(--green-500);
+
+  /* Brand actions */
+  --brand:         var(--green-500);
+  --brand-hover:   var(--green-600);
+  --brand-active:  var(--green-700);
+  --brand-soft:    var(--green-50);
+  --accent:        var(--clay-500);
+  --accent-hover:  var(--clay-600);
+  --accent-soft:   var(--clay-50);
+
+  /* Semantic feedback */
+  --success:      var(--green-500);
+  --success-soft: var(--green-50);
+  --warning:      var(--amber-500);
+  --warning-soft: var(--amber-50);
+  --danger:       var(--red-500);
+  --danger-soft:  var(--red-50);
+  --info:         var(--blue-500);
+  --info-soft:    var(--blue-50);
+
+  /* Focus */
+  --focus-ring: rgba(31, 138, 87, 0.40);
+
+  /* Star rating */
+  --star: #e6a52a;
+}
+
+/* ============================================================
+   DARK THEME — set data-theme="dark" on <html> (or any ancestor).
+   Overrides the semantic aliases only; the raw scales stay fixed.
+   Warm near-black surfaces keep the Mediterranean warmth at night.
+   ============================================================ */
+[data-theme="dark"] {
+  /* Text */
+  --text-strong:  #f5f3ee;
+  --text-body:    #d8d2c6;
+  --text-muted:   #a7a08f;
+  --text-subtle:  #7f7868;
+  --text-inverse: #1a1814;
+  --text-brand:   var(--green-300);
+  --text-onbrand: #ffffff;
+
+  /* Surfaces */
+  --surface-page:       #15140f;
+  --surface-card:       #1f1d17;
+  --surface-raised:     #26241d;
+  --surface-sunken:     #1a1813;
+  --surface-inverse:    #f5f3ee;
+  --surface-brand:      var(--green-500);
+  --surface-brand-soft: rgba(67, 160, 111, 0.16);
+  --surface-accent:     var(--clay-500);
+  --surface-accent-soft: rgba(232, 127, 69, 0.16);
+
+  /* Glass */
+  --glass-light:  rgba(31, 29, 23, 0.60);
+  --glass-strong: rgba(31, 29, 23, 0.82);
+  --glass-dark:   rgba(0, 0, 0, 0.5);
+
+  /* Borders — translucent hairlines read better on dark */
+  --border-subtle:  rgba(245, 243, 238, 0.09);
+  --border-default: rgba(245, 243, 238, 0.15);
+  --border-strong:  rgba(245, 243, 238, 0.26);
+  --border-brand:   var(--green-400);
+
+  /* Brand actions */
+  --brand:        var(--green-500);
+  --brand-hover:  var(--green-400);
+  --brand-active: var(--green-300);
+  --brand-soft:   rgba(67, 160, 111, 0.16);
+  --accent:       var(--clay-400);
+  --accent-hover: var(--clay-300);
+  --accent-soft:  rgba(232, 127, 69, 0.16);
+
+  /* Semantic soft fills — tints over dark */
+  --success-soft: rgba(67, 160, 111, 0.16);
+  --warning-soft: rgba(217, 148, 18, 0.18);
+  --danger-soft:  rgba(207, 64, 64, 0.18);
+  --info-soft:    rgba(47, 116, 204, 0.18);
+
+  /* Focus */
+  --focus-ring: rgba(67, 160, 111, 0.5);
+
+  color-scheme: dark;
+}
+

@@ -1,0 +1,74 @@
+/* ============================================================
+   EBROSTAY — UTILITIES
+   Cross-cutting interaction primitives: accessible focus rings,
+   skeleton loaders, and scroll-reveal entrances. All motion is
+   gated on prefers-reduced-motion.
+   ============================================================ */
+
+/* ---- Smooth, modern base behaviours ---- */
+* { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+html { scroll-behavior: smooth; }
+::selection { background: var(--green-200); color: var(--green-900); }
+
+/* ---- Focus: only show the ring for keyboard users ---- */
+:focus { outline: none; }
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Skeleton loader ---- */
+.ebr-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+}
+.ebr-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: ebr-shimmer 1.4s ease-in-out infinite;
+}
+[data-theme="dark"] .ebr-skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+@keyframes ebr-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* ---- Scroll-reveal ---- */
+.ebr-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  will-change: opacity, transform;
+}
+.ebr-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Stagger helper: set --i on children of a .ebr-reveal-group */
+.ebr-reveal[style*="--i"] { transition-delay: calc(var(--i, 0) * 70ms); }
+
+/* ---- Respect reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ebr-reveal { opacity: 1 !important; transform: none !important; transition: none; }
+  .ebr-skeleton::after { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
