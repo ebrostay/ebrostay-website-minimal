@@ -256,6 +256,15 @@ body {
 .ebr-card-price .p { font-family: var(--font-mono); font-size: 17px; font-weight: 700; color: var(--text-brand); line-height: 1.1; }
 .ebr-card-price .a { font-family: var(--font-mono); font-size: 11px; color: var(--text-subtle); margin-top: 3px; }
 .ebr-card-blurb { font-size: 14px; line-height: 1.5; color: var(--text-body); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+/* DeepSeek-generated "why this fits you" line, folded in after the cards render. */
+.ebr-card-why {
+  display: flex; gap: 7px; align-items: flex-start; font-size: 13px; line-height: 1.45;
+  color: var(--text-body); background: var(--surface-brand-soft); border: 1px solid var(--border-subtle);
+  border-radius: 8px; padding: 8px 10px; animation: ebr-why-in .35s ease both;
+}
+.ebr-card-why strong { color: var(--text-brand); font-weight: 600; }
+.ebr-why-icon { color: var(--brand); flex: none; margin-top: 1px; line-height: 0; }
+@keyframes ebr-why-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
 .ebr-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; border-top: 1px solid var(--border-subtle); }
 .ebr-card-meta { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-subtle); letter-spacing: .02em; }
 .ebr-reserve { font-family: var(--font-mono); font-size: 12.5px; background: var(--brand); color: #fff; border: none; border-radius: 6px; padding: 9px 15px; cursor: pointer; transition: background .15s ease; }

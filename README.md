@@ -83,6 +83,19 @@ prices. If DeepSeek is unreachable, the client falls back to a local regex match
 the conversation always works. (`js/data.js` → `aiParse()` → the edge function;
 `js/app.js` → `guestIntent()` / `hostIntent()` consume it, with a regex fallback.)
 
+**Why each home fits.** Once the real matches are on screen, a second call
+(`action: 'explain'` -> `js/data.js` `aiExplain()` -> `js/app.js` `explainMatches()`)
+asks DeepSeek for a one-line "why this fits you" per listing and folds it into the
+cards as progressive enhancement (the cards never wait on it). The explanation may
+only cite facts present in that listing's data, so it stays grounded -- it can't claim
+parking or a riverside location a flat doesn't actually have.
+
+**Web-search enrichment (seam in place, not yet wired).** DeepSeek's API has *no*
+built-in web search, so live area/commute context needs an external provider (SerpApi
+/ Brave / Tavily). The `explain` action already accepts an optional `context` string
+that is injected into the prompt as background the model may cite; to turn it on, add a
+search-API key as an edge-function secret and populate `context` per query.
+
 ### Prototype boundaries — what to make real
 
 The phone identity and saved stays are a **client-side prototype** (`localStorage`,

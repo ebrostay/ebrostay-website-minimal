@@ -184,5 +184,26 @@
     });
   }
 
-  window.EBR_DATA = { HOMES: HOMES, loadLiveHomes: loadLiveHomes, aiParse: aiParse, getClient: getClient, project: project };
+  /* ---- DeepSeek-powered match explanations -----------------------------
+     Given the visitor's request and the REAL listings the site matched, asks
+     the \`explain\` action for a one-line "why this fits you" per listing. Purely
+     additive (progressive enhancement): resolves a { <ref>: sentence } map, or
+     null on any failure / timeout, so cards always render with or without it. */
+  function aiExplain(query, lang, homes) {
+    return new Promise(function (resolve) {
+      try {
+        var c = getClient();
+        if (!c || !c.functions || !homes || !homes.length) { resolve(null); return; }
+        var done = false;
+        var to = setTimeout(function () { if (!done) { done = true; resolve(null); } }, 16000);
+        c.functions.invoke("conversational-search", { body: { action: "explain", query: query, lang: lang, homes: homes } })
+          .then(function (r) {
+            if (done) return; done = true; clearTimeout(to);
+            resolve(r && !r.error && r.data && r.data.reasons ? r.data.reasons : null);
+          }, function () { if (!done) { done = true; clearTimeout(to); resolve(null); } });
+      } catch (e) { resolve(null); }
+    });
+  }
+
+  window.EBR_DATA = { HOMES: HOMES, loadLiveHomes: loadLiveHomes, aiParse: aiParse, aiExplain: aiExplain, getClient: getClient, project: project };
 })();

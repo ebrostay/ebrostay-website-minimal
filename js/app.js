@@ -44,7 +44,8 @@
     moon: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path></svg>',
     user: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
     wa: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"></path></svg>',
-    mail: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>'
+    mail: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>',
+    spark: '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.7a2 2 0 0 0 1.3 1.3L21 11l-5.7 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.7a2 2 0 0 0-1.3-1.3L3 11l5.7-1.9a2 2 0 0 0 1.3-1.3L12 2z"></path></svg>'
   };
 
   /* ================= App ================= */
@@ -190,9 +191,11 @@
         var m2 = self.state.messages.slice();
         if (!m2.length || !m2[m2.length - 1].thinking) return; // superseded (e.g. reset)
         var res = self.mode === "host" ? self.buildReply(query, parsed) : self.buildResults(query, parsed);
-        if (self.mode === "host") m2[m2.length - 1] = { role: "system", summary: res.summary, est: res.est || null, chips: res.chips };
-        else m2[m2.length - 1] = { role: "system", summary: res.summary, results: res.results, chips: res.chips };
+        if (self.mode === "host") { m2[m2.length - 1] = { role: "system", summary: res.summary, est: res.est || null, chips: res.chips }; self.set({ messages: m2 }); return; }
+        var mid = "m" + Date.now() + "-" + Math.floor(Math.random() * 1e4);
+        m2[m2.length - 1] = { role: "system", summary: res.summary, results: res.results, chips: res.chips, mid: mid };
         self.set({ messages: m2 });
+        self.explainMatches(mid, query, lang, res.results); // progressive "why it matches"
       }, wait));
     });
   };
@@ -291,6 +294,33 @@
       results: top.map(function (h) { return self.card(h); }),
       chips: t.chips
     };
+  };
+
+  // Progressive enhancement: after real matches are on screen, ask DeepSeek for
+  // a grounded "why this fits you" per listing and fold the reasons into the
+  // already-rendered cards. Fully optional — silent no-op if it can't run.
+  App.prototype.explainMatches = function (mid, query, lang, results) {
+    if (!DATA.aiExplain || !results || !results.length) return;
+    var self = this, t = this.t();
+    var homes = results.filter(function (c) { return c.home; }).map(function (c) {
+      var h = c.home;
+      return {
+        ref: c.ref, name: self.L(h.name), hood: self.L(h.hood), price: h.priceLabel,
+        beds: h.beds, guests: h.guests, blurb: self.L(h.blurb) || self.L(h.about),
+        amenities: (h.amen || []).map(function (k) { return t.amen[k]; }).filter(Boolean)
+      };
+    });
+    if (!homes.length) return;
+    DATA.aiExplain(query, lang, homes).then(function (reasons) {
+      if (!reasons) return;
+      var msgs = self.state.messages;
+      var msg = null;
+      for (var i = 0; i < msgs.length; i++) { if (msgs[i].mid === mid) { msg = msgs[i]; break; } }
+      if (!msg || !msg.results) return;
+      var changed = false;
+      msg.results.forEach(function (c) { if (c.ref && reasons[c.ref]) { c.reason = reasons[c.ref]; changed = true; } });
+      if (changed) self.set({ messages: msgs.slice() });
+    });
   };
     App.prototype.reserve = function (r) {
     var t = this.t();
@@ -630,7 +660,7 @@
     return map;
   };
   App.prototype.renderCard = function (r) {
-    var self = this;
+    var self = this, t = this.t();
     var photoCol = null;
     if (r.hasImg && r.img) {
       photoCol = el("div", { class: "ebr-card-photo" }, [el("img", { src: r.img, alt: "" }), el("div", { class: "ebr-photo-count", text: r.photoCount })]);
@@ -643,6 +673,10 @@
         el("div", { class: "ebr-card-price" }, [el("div", { class: "p", text: r.price }), el("div", { class: "a", text: r.allIn })])
       ]),
       el("div", { class: "ebr-card-blurb", text: r.blurb }),
+      r.reason ? el("div", { class: "ebr-card-why" }, [
+        el("span", { class: "ebr-why-icon", html: IC.spark }),
+        el("span", null, [el("strong", { text: t.whyMatch + " " }), r.reason])
+      ]) : null,
       el("div", { class: "ebr-card-foot" }, [
         el("span", { class: "ebr-card-meta", text: r.meta + " · " + r.ref }),
         el("button", { class: "ebr-reserve", text: r.cta, onclick: function (e) { e.stopPropagation(); self.reserve(r); } })
