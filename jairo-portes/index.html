@@ -1,60 +1,326 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jairo Portes | EbroMove</title>
-  <meta name="description" content="Portes urbanos e intermunicipales con furgoneta. Calcula una estimación con dirección, municipio, volumen, peso y plantas." />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="preconnect" href="https://unpkg.com" />
-  <style>
-    :root{--ink:#142321;--muted:#5e6d68;--paper:#f7f4ee;--surface:#fff;--teal:#0f766e;--teal-dark:#0b4f4a;--amber:#f0b429;--brick:#b24b35;--line:rgba(20,35,33,.14);--shadow:0 24px 70px rgba(20,35,33,.22);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--paper);overflow-x:hidden}button,input{font:inherit}a{color:inherit;text-decoration:none}.site-header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px clamp(18px,4vw,56px);color:#fff;background:linear-gradient(180deg,rgba(12,21,20,.72),rgba(12,21,20,0))}.brand{display:inline-flex;align-items:center;gap:10px;min-width:164px}.brand-mark{display:grid;width:42px;height:42px;place-items:center;border:2px solid rgba(255,255,255,.64);border-radius:8px;background:rgba(15,118,110,.82);font-weight:850}.brand strong,.brand small{display:block;line-height:1.05}.brand small{margin-top:3px;color:rgba(255,255,255,.72)}nav{display:flex;align-items:center;gap:clamp(12px,2.4vw,28px);font-size:.95rem;font-weight:650}nav a{opacity:.88}.hero{position:relative;min-height:88vh;overflow:hidden;color:#fff}.hero-media,.hero-shade{position:absolute;inset:0}.hero-media{background-image:url("https://images.unsplash.com/photo-1694715669993-ea0022b470f7?auto=format&fit=crop&fm=jpg&q=72&w=2400");background-position:center;background-size:cover;transform:scale(1.01)}.hero-shade{background:linear-gradient(90deg,rgba(9,19,18,.84) 0%,rgba(9,19,18,.58) 44%,rgba(9,19,18,.16) 100%),linear-gradient(180deg,rgba(9,19,18,.18),rgba(9,19,18,.72))}.hero-content{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,430px);gap:clamp(28px,5vw,72px);align-items:center;width:min(1180px,calc(100% - 36px));min-height:88vh;margin:0 auto;padding:112px 0 34px}.hero-copy{max-width:660px}.eyebrow{margin:0 0 12px;color:var(--amber);font-size:.78rem;font-weight:850;letter-spacing:0;text-transform:uppercase}h1,h2,h3,p{margin-top:0}h1{max-width:12ch;margin-bottom:22px;font-size:clamp(3.1rem,8vw,6.8rem);line-height:.92;letter-spacing:0}h2{margin-bottom:12px;font-size:clamp(2rem,4vw,3.25rem);line-height:1.02;letter-spacing:0}h3{margin-bottom:10px;font-size:1.08rem;letter-spacing:0}.hero-copy p:not(.eyebrow){max-width:52ch;color:rgba(255,255,255,.84);font-size:1.12rem;line-height:1.62}.hero-actions,.result-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.button{display:inline-flex;min-height:46px;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;border-radius:8px;padding:12px 16px;font-weight:800;line-height:1;white-space:normal;cursor:pointer;transition:transform 160ms ease,box-shadow 160ms ease,background 160ms ease}.button svg{width:19px;height:19px;flex:0 0 auto}.button:hover{transform:translateY(-1px)}.button.primary{color:#fff;background:var(--teal);box-shadow:0 14px 32px rgba(15,118,110,.28)}.button.primary:hover{background:var(--teal-dark)}.button.secondary{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.13);backdrop-filter:blur(14px)}.button.ghost{color:var(--teal-dark);border-color:rgba(15,118,110,.28);background:#eff8f6}.button.full{width:100%;margin-top:16px}.quote-card{display:grid;gap:14px;width:100%;max-width:100%;border:1px solid rgba(255,255,255,.24);border-radius:8px;padding:clamp(18px,3vw,26px);color:var(--ink);background:rgba(255,255,255,.94);box-shadow:var(--shadow);backdrop-filter:blur(18px)}.form-heading{display:flex;align-items:center;gap:12px;margin-bottom:2px}.form-heading h2{margin:0;font-size:1.45rem}.form-heading p{margin:4px 0 0;color:var(--muted);font-size:.92rem}.icon-pill{display:grid;width:44px;height:44px;place-items:center;border-radius:8px;color:#fff;background:var(--brick)}label{display:grid;gap:7px;color:#31433f;font-size:.84rem;font-weight:800}input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--ink);background:#fff;outline:none}input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(15,118,110,.12)}.two-col,.address-grid{display:grid;gap:12px}.two-col{grid-template-columns:1fr 1fr}.address-grid{grid-template-columns:minmax(0,1.35fr) minmax(126px,.65fr)}.input-suffix{position:relative;display:block}.input-suffix input{padding-right:48px}.input-suffix span{position:absolute;top:50%;right:12px;color:var(--muted);font-weight:850;transform:translateY(-50%)}.advanced{border-top:1px solid var(--line);padding-top:4px}.advanced summary{display:flex;min-height:34px;align-items:center;justify-content:space-between;color:var(--teal-dark);font-size:.88rem;font-weight:850;cursor:pointer;list-style:none}.advanced summary::-webkit-details-marker{display:none}.advanced[open] summary svg{transform:rotate(180deg)}.advanced .address-grid{margin-top:10px}.advanced .two-col{margin-top:12px}.form-status{min-height:20px;margin:0;color:var(--muted);font-size:.88rem;line-height:1.4}.form-status.error{color:var(--brick)}section:not(.hero){padding:clamp(54px,8vw,92px) clamp(18px,4vw,56px)}.section-heading{width:min(1080px,100%);margin:0 auto 28px}.section-heading h2{max-width:760px}.estimate-section{background:#fff}.estimate-layout{display:grid;grid-template-columns:minmax(280px,.86fr) minmax(320px,1.14fr);gap:18px;width:min(1080px,100%);margin:0 auto}.result-panel,.breakdown,.service-grid article,.price-rule{border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 18px 46px rgba(20,35,33,.08)}.result-panel{display:grid;gap:20px;padding:clamp(20px,4vw,30px);align-content:start}.muted{margin-bottom:4px;color:var(--muted);font-weight:800}.price{display:block;color:var(--teal-dark);font-size:clamp(3rem,8vw,5.5rem);font-weight:900;line-height:.92}.route-summary{color:var(--muted);line-height:1.58}.breakdown{display:grid;padding:clamp(18px,3vw,26px)}.breakdown div{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:52px;border-bottom:1px solid var(--line)}.breakdown div:last-child{border-bottom:0}.breakdown span{color:var(--muted);font-weight:700}.breakdown strong{text-align:right}.services-section{background:#eef5f3}.service-grid,.pricing-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;width:min(1080px,100%);margin:0 auto}.service-grid article,.price-rule{padding:22px}.service-grid svg{width:28px;height:28px;margin-bottom:18px;color:var(--teal)}.service-grid p,.price-rule p,.contact-section p{color:var(--muted);line-height:1.58}.pricing-section{background:var(--paper)}.pricing-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.price-rule span{display:inline-flex;margin-bottom:16px;color:var(--brick);font-weight:900}.contact-section{display:flex;align-items:center;justify-content:space-between;gap:28px;color:#fff;background:var(--teal-dark)}.contact-section>div{max-width:700px}.contact-section h2{margin-bottom:12px}.contact-section p{margin-bottom:0;color:rgba(255,255,255,.76)}footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:24px clamp(18px,4vw,56px);color:rgba(255,255,255,.72);background:#0d1816;font-size:.92rem}@media(max-width:980px){.site-header{position:absolute}nav{display:none}.hero-content,.estimate-layout{grid-template-columns:1fr}.hero-content{align-items:end;padding-top:92px}h1{max-width:9ch}.service-grid,.pricing-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.hero{min-height:auto}.hero-content{width:100%;min-height:auto;padding-right:18px;padding-bottom:26px;padding-left:18px}.hero-copy{padding-top:42px;max-width:100%}h1{max-width:100%;font-size:clamp(2.72rem,13vw,3.18rem);line-height:.98;overflow-wrap:break-word}.hero-copy p:not(.eyebrow){max-width:min(31ch,100%);font-size:1rem;overflow-wrap:break-word}.quote-card{padding:16px}.two-col,.address-grid,.service-grid,.pricing-grid{grid-template-columns:1fr}.hero-actions,.result-actions,.contact-section{align-items:stretch;flex-direction:column}.button{width:100%}section:not(.hero){padding-top:46px;padding-bottom:46px}}
-  </style>
-</head>
-<body>
-  <header class="site-header">
-    <a class="brand" href="#inicio" aria-label="Jairo Portes"><span class="brand-mark">JP</span><span><strong>Jairo Portes</strong><small>EbroMove</small></span></a>
-    <nav aria-label="Principal"><a href="#servicios">Servicios</a><a href="#precios">Precios</a><a href="#estimador">Estimador</a><a href="#contacto">Contacto</a></nav>
-  </header>
-  <main>
-    <section id="inicio" class="hero">
-      <div class="hero-media" role="img" aria-label="Furgoneta de reparto con cajas"></div><div class="hero-shade"></div>
-      <div class="hero-content">
-        <div class="hero-copy">
-          <p class="eyebrow">Portes pequeños desde 50 euros</p>
-          <h1>Portes con furgoneta en Zaragoza y alrededores</h1>
-          <p>Recogidas, entregas, muebles, electrodomésticos y pequeñas mudanzas urbanas o intermunicipales con 200 kg y 5 m³ incluidos en el mínimo.</p>
-          <div class="hero-actions"><a class="button primary" href="#estimador"><i data-lucide="calculator"></i>Calcular precio</a><a class="button secondary" href="#servicios"><i data-lucide="package-check"></i>Ver servicios</a></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jairo Portes | EbroMove</title>
+    <meta
+      name="description"
+      content="Portes, recogidas y pequeñas mudanzas con furgoneta. Calcula una estimación con ruta, fecha, hora, volumen y plantas."
+    />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="Jairo Portes">
+        <span class="brand-mark">JP</span>
+        <span>
+          <strong>Jairo Portes</strong>
+          <small>EbroMove</small>
+        </span>
+      </a>
+      <nav aria-label="Principal">
+        <a href="#servicios">Servicios</a>
+        <a href="#precios">Precios</a>
+        <a href="#estimador">Estimador</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <div class="hero-media" role="img" aria-label="Furgoneta blanca profesional cargando cajas en una calle urbana"></div>
+        <div class="hero-shade"></div>
+        <div class="hero-content">
+          <div class="hero-copy">
+            <p class="eyebrow">Portes pequeños desde 50 euros</p>
+            <h1>Portes con furgoneta en Zaragoza y alrededores</h1>
+            <p>
+              Recogidas, entregas, muebles, electrodomésticos y pequeñas mudanzas urbanas o intermunicipales con 200 kg y 5 m³ incluidos por furgoneta.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#estimador">
+                <i data-lucide="calculator"></i>
+                Calcular precio
+              </a>
+              <a class="button secondary" href="#servicios">
+                <i data-lucide="package-check"></i>
+                Ver servicios
+              </a>
+            </div>
+          </div>
+
+          <form id="quoteForm" class="quote-card" aria-label="Estimador de precio">
+            <div class="form-heading">
+              <span class="icon-pill"><i data-lucide="route"></i></span>
+              <div>
+                <h2>Estimación rápida</h2>
+                <p>Direcciones, fecha, volumen, peso y plantas.</p>
+              </div>
+            </div>
+
+            <div class="address-grid">
+              <label>
+                Recogida
+                <input id="pickupAddress" name="pickupAddress" type="text" placeholder="Calle Maria Moliner 19" autocomplete="street-address" />
+              </label>
+
+              <label>
+                Municipio
+                <input id="pickupCity" name="pickupCity" type="text" value="Zaragoza" autocomplete="address-level2" />
+              </label>
+            </div>
+
+            <div class="address-grid">
+              <label>
+                Entrega
+                <input id="deliveryAddress" name="deliveryAddress" type="text" placeholder="Pedro II el Catolico 3" autocomplete="street-address" />
+              </label>
+
+              <label>
+                Municipio
+                <input id="deliveryCity" name="deliveryCity" type="text" value="Zaragoza" autocomplete="address-level2" />
+              </label>
+            </div>
+
+            <label>
+              Fecha y hora
+              <input id="serviceAt" name="serviceAt" type="datetime-local" />
+            </label>
+
+            <div class="two-col">
+              <label>
+                Volumen aprox.
+                <span class="input-suffix">
+                  <input id="volume" name="volume" type="number" min="0.1" step="0.1" value="3" inputmode="decimal" />
+                  <span>m³</span>
+                </span>
+              </label>
+
+              <label>
+                Peso aprox.
+                <span class="input-suffix">
+                  <input id="weight" name="weight" type="number" min="0" step="10" placeholder="opcional" inputmode="decimal" />
+                  <span>kg</span>
+                </span>
+              </label>
+            </div>
+
+            <div class="two-col">
+              <label>
+                Plantas recogida
+                <input id="pickupFloors" name="pickupFloors" type="number" min="0" max="12" step="1" value="0" inputmode="numeric" />
+              </label>
+
+              <label>
+                Plantas entrega
+                <input id="deliveryFloors" name="deliveryFloors" type="number" min="0" max="12" step="1" value="0" inputmode="numeric" />
+              </label>
+            </div>
+
+            <details class="advanced">
+              <summary>
+                <span>Opciones de ruta</span>
+                <i data-lucide="chevron-down"></i>
+              </summary>
+
+              <div class="address-grid">
+                <label>
+                  Base de la furgoneta
+                  <input id="baseAddress" name="baseAddress" type="text" value="Paseo Independencia 10" />
+                </label>
+
+                <label>
+                  Municipio base
+                  <input id="baseCity" name="baseCity" type="text" value="Zaragoza" />
+                </label>
+              </div>
+
+              <div class="two-col">
+                <label>
+                  Km hasta recogida
+                  <span class="input-suffix">
+                    <input id="emptyKm" name="emptyKm" type="number" min="0" step="0.1" value="0" inputmode="decimal" />
+                    <span>km</span>
+                  </span>
+                </label>
+
+                <label>
+                  Km con carga
+                  <span class="input-suffix">
+                    <input id="loadedKm" name="loadedKm" type="number" min="0" step="0.1" value="0" inputmode="decimal" />
+                    <span>km</span>
+                  </span>
+                </label>
+              </div>
+            </details>
+
+            <button class="button primary full" type="submit">
+              <i data-lucide="map-pinned"></i>
+              Calcular estimación
+            </button>
+
+            <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+          </form>
         </div>
-        <form id="quoteForm" class="quote-card" aria-label="Estimador de precio">
-          <div class="form-heading"><span class="icon-pill"><i data-lucide="route"></i></span><div><h2>Estimación rápida</h2><p>Direcciones, volumen, peso y plantas.</p></div></div>
-          <div class="address-grid"><label>Recogida<input id="pickupAddress" type="text" placeholder="Calle Maria Moliner 19" autocomplete="street-address" /></label><label>Municipio<input id="pickupCity" type="text" value="Zaragoza" autocomplete="address-level2" /></label></div>
-          <div class="address-grid"><label>Entrega<input id="deliveryAddress" type="text" placeholder="Pedro II el Catolico 3" autocomplete="street-address" /></label><label>Municipio<input id="deliveryCity" type="text" value="Zaragoza" autocomplete="address-level2" /></label></div>
-          <div class="two-col"><label>Volumen aprox.<span class="input-suffix"><input id="volume" type="number" min="0.1" max="15" step="0.1" value="3" inputmode="decimal" /><span>m³</span></span></label><label>Peso aprox.<span class="input-suffix"><input id="weight" type="number" min="0" max="2000" step="10" placeholder="opcional" inputmode="decimal" /><span>kg</span></span></label></div>
-          <div class="two-col"><label>Plantas recogida<input id="pickupFloors" type="number" min="0" max="12" step="1" value="0" inputmode="numeric" /></label><label>Plantas entrega<input id="deliveryFloors" type="number" min="0" max="12" step="1" value="0" inputmode="numeric" /></label></div>
-          <details class="advanced"><summary><span>Opciones de ruta</span><i data-lucide="chevron-down"></i></summary><div class="address-grid"><label>Base de la furgoneta<input id="baseAddress" type="text" value="Paseo Independencia 10" /></label><label>Municipio base<input id="baseCity" type="text" value="Zaragoza" /></label></div><div class="two-col"><label>Km hasta recogida<span class="input-suffix"><input id="emptyKm" type="number" min="0" step="0.1" value="0" inputmode="decimal" /><span>km</span></span></label><label>Km con carga<span class="input-suffix"><input id="loadedKm" type="number" min="0" step="0.1" value="0" inputmode="decimal" /><span>km</span></span></label></div></details>
-          <button class="button primary full" type="submit"><i data-lucide="map-pinned"></i>Calcular estimación</button><p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-    <section id="estimador" class="estimate-section"><div class="section-heading"><p class="eyebrow">Presupuesto orientativo</p><h2>Resultado del cálculo</h2></div><div class="estimate-layout"><article class="result-panel"><div><p class="muted">Total estimado</p><output id="totalPrice" class="price">--</output></div><div id="routeSummary" class="route-summary">Introduce una ruta o ajusta los kilómetros manualmente.</div><div class="result-actions"><button id="copyQuote" class="button secondary" type="button"><i data-lucide="copy"></i>Copiar resumen</button><a id="whatsappLink" class="button ghost" href="https://wa.me/" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>WhatsApp</a></div></article><div class="breakdown" aria-label="Desglose de precio"><div><span>Desplazamiento</span><strong id="emptyCost">--</strong></div><div><span>Recorrido con carga</span><strong id="loadedCost">--</strong></div><div><span>Carga</span><strong id="loadCost">--</strong></div><div><span>Descarga</span><strong id="unloadCost">--</strong></div><div><span>Subida por plantas</span><strong id="floorCost">--</strong></div><div><span>Tarifa km con carga</span><strong id="kmRate">--</strong></div></div></div></section>
-    <section id="servicios" class="services-section"><div class="section-heading"><p class="eyebrow">Servicios</p><h2>Portes para particulares y negocios</h2></div><div class="service-grid"><article><i data-lucide="sofa"></i><h3>Muebles y electrodomésticos</h3><p>Recogida en tienda, segunda mano, Wallapop, Milanuncios y entregas a domicilio.</p></article><article><i data-lucide="warehouse"></i><h3>Obramat, Bauhaus e Ikea</h3><p>Materiales, paquetes grandes, tableros, cajas y cargas que no caben en coche.</p></article><article><i data-lucide="home"></i><h3>Pequeñas mudanzas</h3><p>Habitaciones, estudios, trasteros y cambios de piso con furgoneta de hasta 15 m³.</p></article><article><i data-lucide="briefcase-business"></i><h3>Empresas y profesionales</h3><p>Rutas recurrentes urbanas e intermunicipales para reformas, inmobiliarias, administradores y comercios locales.</p></article></div></section>
-    <section id="precios" class="pricing-section"><div class="section-heading"><p class="eyebrow">Modelo de precios</p><h2>Tarifa clara antes de reservar</h2></div><div class="pricing-grid"><article class="price-rule"><span>01</span><h3>Mínimo</h3><p>Ticket mínimo de 50 euros para portes pequeños. Incluye hasta 200 kg y 5 m³ sin extra de carga o descarga; las plantas se suman aparte.</p></article><article class="price-rule"><span>02</span><h3>Kilómetros</h3><p>1 euro/km hasta la recogida y recorrido con carga desde 1 euro/km.</p></article><article class="price-rule"><span>03</span><h3>Ocupación</h3><p>Desde 5 m³ o 200 kg, el recorrido con carga sube progresivamente hasta 2 euros/km con 15 m³ o 2.000 kg.</p></article><article class="price-rule"><span>04</span><h3>Carga y descarga</h3><p>Superado el tramo incluido, 20 euros por cada bloque de 100 kg o 3 m³, con tope de 50 euros por operación.</p></article><article class="price-rule"><span>05</span><h3>Plantas</h3><p>2,50 euros por cada 100 kg y tramo de hasta 3 plantas. Se suma al mínimo si hay que subir o bajar mercancía.</p></article><article class="price-rule"><span>06</span><h3>Confirmación</h3><p>El importe final depende de ascensor, aparcamiento, esperas, fragilidad y ayuda disponible.</p></article></div></section>
-    <section id="contacto" class="contact-section"><div><p class="eyebrow">Reserva</p><h2>Presupuesto listo para enviar</h2><p>El estimador prepara un resumen con ruta, volumen, carga y extras. Cópialo y envíalo por WhatsApp para confirmar disponibilidad.</p></div><a class="button primary" href="#inicio"><i data-lucide="send"></i>Preparar presupuesto</a></section>
-  </main>
-  <footer><span>Jairo Portes | EbroMove</span><span>Portes, recogidas y pequeñas mudanzas</span></footer>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script>
-    const PRICING={minTicket:50,emptyKmRate:1,baseLoadedKmRate:1,maxLoadedKmRate:2,maxVolumeM3:15,maxWeightKg:2000,includedVolumeM3:5,includedWeightKg:200,handlingUnitKg:100,handlingUnitM3:3,handlingUnitPrice:20,handlingMaxPerOperation:50,floorUnitPrice:2.5,floorBlockSize:3};
-    const $=(id)=>document.querySelector(id);const form=$("#quoteForm"),statusEl=$("#formStatus"),copyQuoteButton=$("#copyQuote"),whatsappLink=$("#whatsappLink");
-    const fields={baseAddress:$("#baseAddress"),baseCity:$("#baseCity"),pickupAddress:$("#pickupAddress"),pickupCity:$("#pickupCity"),deliveryAddress:$("#deliveryAddress"),deliveryCity:$("#deliveryCity"),volume:$("#volume"),weight:$("#weight"),pickupFloors:$("#pickupFloors"),deliveryFloors:$("#deliveryFloors"),emptyKm:$("#emptyKm"),loadedKm:$("#loadedKm")};
-    const output={totalPrice:$("#totalPrice"),routeSummary:$("#routeSummary"),emptyCost:$("#emptyCost"),loadedCost:$("#loadedCost"),loadCost:$("#loadCost"),unloadCost:$("#unloadCost"),floorCost:$("#floorCost"),kmRate:$("#kmRate")};let lastQuote=null;const addressCache=new Map(),routeCache=new Map();
-    function toNumber(v,f=0){const n=Number.parseFloat(String(v).replace(",","."));return Number.isFinite(n)?n:f}function money(v){const r=Number.isInteger(v)?v:Number(v.toFixed(2));return `${r.toLocaleString("es-ES",{maximumFractionDigits:2})} €`}function km(v){return `${v.toLocaleString("es-ES",{maximumFractionDigits:1})} km`}function clamp(v,min,max){return Math.min(Math.max(v,min),max)}function normalizeText(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("es-ES").trim()}function joinAddress(a,c){const aa=String(a||"").trim(),cc=String(c||"").trim();if(!aa)return cc;if(!cc||normalizeText(aa).includes(normalizeText(cc)))return aa;return `${aa}, ${cc}`}function labelAddress(a,c){return joinAddress(a,c)||"por confirmar"}function validPoint(r){const lat=parseFloat(r.lat),lon=parseFloat(r.lon);return Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=27&&lat<=44.5&&lon>=-19&&lon<=5}function resultMatchesCity(r,city){const a=r.address||{},text=normalizeText(`${a.city||""} ${a.town||""} ${a.village||""} ${a.hamlet||""} ${a.municipality||""}`);return !city||text.includes(normalizeText(city))}function filterResults(rs,city){return(Array.isArray(rs)?rs:[]).filter(r=>validPoint(r)&&resultMatchesCity(r,city))}
-    function loadShare(v,w){const cv=Math.max(0,v-PRICING.includedVolumeM3),cw=w>0?Math.max(0,w-PRICING.includedWeightKg):0;return Math.max(clamp(cv/(PRICING.maxVolumeM3-PRICING.includedVolumeM3),0,1),w>0?clamp(cw/(PRICING.maxWeightKg-PRICING.includedWeightKg),0,1):0)}function handlingUnits(v,w){const cv=Math.max(0,v-PRICING.includedVolumeM3),cw=w>0?Math.max(0,w-PRICING.includedWeightKg):0;return Math.max(cv>0?Math.ceil(cv/PRICING.handlingUnitM3):0,cw>0?Math.ceil(cw/PRICING.handlingUnitKg):0)}function operationFee(u){return u<=0?0:Math.min(PRICING.handlingMaxPerOperation,Math.max(PRICING.handlingUnitPrice,u*PRICING.handlingUnitPrice))}function floorExtra(v,w,p,d){const estimated=w>0?w:v/PRICING.maxVolumeM3*PRICING.maxWeightKg,units=Math.max(1,Math.ceil(estimated/PRICING.handlingUnitKg)),pb=Math.ceil(Math.max(p,0)/PRICING.floorBlockSize),db=Math.ceil(Math.max(d,0)/PRICING.floorBlockSize);return units*PRICING.floorUnitPrice*(pb+db)}function calculateQuote(i){const share=loadShare(i.volumeM3,i.weightKg),rate=clamp(PRICING.baseLoadedKmRate*(1+share),PRICING.baseLoadedKmRate,PRICING.maxLoadedKmRate),units=handlingUnits(i.volumeM3,i.weightKg),loadFee=operationFee(units),unloadFee=operationFee(units),floor=floorExtra(i.volumeM3,i.weightKg,i.pickupFloors,i.deliveryFloors),empty=i.emptyKm*PRICING.emptyKmRate,loaded=i.loadedKm*rate,base=empty+loaded+loadFee+unloadFee,total=Math.max(PRICING.minTicket,base)+floor;return{...i,loadedKmRate:rate,loadFee,unloadFee,floorExtra:floor,emptyCost:empty,loadedCost:loaded,baseSubtotal:base,total}}
-    function readInputs(){return{emptyKm:Math.max(0,toNumber(fields.emptyKm.value)),loadedKm:Math.max(0,toNumber(fields.loadedKm.value)),volumeM3:clamp(toNumber(fields.volume.value,3),.1,PRICING.maxVolumeM3),weightKg:clamp(toNumber(fields.weight.value),0,PRICING.maxWeightKg),pickupFloors:clamp(Math.round(toNumber(fields.pickupFloors.value)),0,12),deliveryFloors:clamp(Math.round(toNumber(fields.deliveryFloors.value)),0,12)}}function buildMessage(q){return["Hola Jairo, quiero confirmar este porte:",`Recogida: ${labelAddress(fields.pickupAddress.value,fields.pickupCity.value)}`,`Entrega: ${labelAddress(fields.deliveryAddress.value,fields.deliveryCity.value)}`,`Volumen aproximado: ${q.volumeM3} m³`,q.weightKg>0?`Peso aproximado: ${q.weightKg} kg`:"Peso aproximado: por confirmar",`Plantas recogida: ${q.pickupFloors}`,`Plantas entrega: ${q.deliveryFloors}`,`Km hasta recogida: ${q.emptyKm.toFixed(1)}`,`Km con carga: ${q.loadedKm.toFixed(1)}`,`Estimación: ${money(q.total)}`].join("\n")}function render(q,src="manual"){lastQuote=q;output.totalPrice.textContent=money(q.total);output.emptyCost.textContent=`${money(q.emptyCost)} (${km(q.emptyKm)})`;output.loadedCost.textContent=`${money(q.loadedCost)} (${km(q.loadedKm)})`;output.loadCost.textContent=money(q.loadFee);output.unloadCost.textContent=money(q.unloadFee);output.floorCost.textContent=money(q.floorExtra);output.kmRate.textContent=`${q.loadedKmRate.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})} €/km`;output.routeSummary.textContent=`${src==="map"?"Ruta calculada por carretera":"Kilómetros introducidos manualmente"}: ${km(q.emptyKm)} hasta la recogida y ${km(q.loadedKm)} con carga. Volumen: ${q.volumeM3.toLocaleString("es-ES")} m³${q.weightKg>0?`, peso: ${q.weightKg.toLocaleString("es-ES")} kg`:""}.`;whatsappLink.href=`https://wa.me/?text=${encodeURIComponent(buildMessage(q))}`}function setStatus(m,t="info"){statusEl.textContent=m;statusEl.classList.toggle("error",t==="error")}
-    async function requestJson(url,msg){let r;try{r=await fetch(url.toString(),{headers:{Accept:"application/json"}})}catch{throw new Error(msg)}if(!r.ok)throw new Error(msg);return r.json()}function mapPhoton(f){const p=f.properties||{},coords=f.geometry?.coordinates||[],street=[p.street,p.housenumber].filter(Boolean).join(" "),parts=[p.name,street,p.postcode,p.city||p.county,p.state,p.country].filter(Boolean);return{lat:coords[1],lon:coords[0],display_name:[...new Set(parts)].join(", "),importance:.5,address:{road:p.street,house_number:p.housenumber,city:p.city,town:p.city,village:p.city,municipality:p.city||p.county,county:p.county,state:p.state,postcode:p.postcode,country:p.country,country_code:p.countrycode}}}async function photon(a,c){const u=new URL("https://photon.komoot.io/api/");u.searchParams.set("q",`${joinAddress(a,c)}, España`);u.searchParams.set("limit","8");const p=await requestJson(u,"No he podido consultar el mapa ahora mismo.");return(p.features||[]).map(mapPhoton)}async function nominatim(a,c){const u=new URL("https://nominatim.openstreetmap.org/search");u.searchParams.set("format","jsonv2");u.searchParams.set("countrycodes","es");u.searchParams.set("limit","5");u.searchParams.set("addressdetails","1");u.searchParams.set("accept-language","es");u.searchParams.set("q",`${joinAddress(a,c)}, España`);return requestJson(u,"No he podido consultar el mapa ahora mismo.")}async function carto(a,c){const u=new URL("https://www.cartociudad.es/geocoder/api/geocoder/candidates");u.searchParams.set("q",a||c);u.searchParams.set("limit","8");if(c)u.searchParams.set("municipio_filter",c);const p=await requestJson(u,"No he podido consultar el mapa ahora mismo.");return(Array.isArray(p)?p:[]).map(x=>({lat:x.lat,lon:x.lng,display_name:x.address,importance:x.type==="portal"?1:.75,address:{road:x.address,city:x.muni||x.poblacion,town:x.poblacion,village:x.poblacion,municipality:x.muni,county:x.province,state:x.comunidadAutonoma,postcode:x.postalCode,country:"España",country_code:"es"}}))}async function geocode(a,c){const full=joinAddress(a,c);if(!full)throw new Error("Falta una dirección para calcular la ruta.");const key=normalizeText(`${full}, España`);if(addressCache.has(key))return addressCache.get(key)[0];let got=false,last=null;for(const src of [carto,photon,nominatim]){try{const raw=await src(a,c);if(Array.isArray(raw))got=true;const rs=filterResults(raw,c);if(rs.length){addressCache.set(key,rs);return rs[0]}}catch(e){last=e}}if(got)throw new Error(`No he encontrado ${full}. Revisa calle, número y municipio.`);throw last||new Error("No he podido consultar el mapa ahora mismo.")}async function routeDistance(from,to){const key=`${from.lon},${from.lat};${to.lon},${to.lat}`;if(routeCache.has(key))return routeCache.get(key);const u=new URL(`https://router.project-osrm.org/route/v1/driving/${from.lon},${from.lat};${to.lon},${to.lat}`);u.searchParams.set("overview","false");const p=await requestJson(u,"No he podido calcular la ruta por carretera ahora mismo."),r=p.routes?.[0];if(!r)throw new Error("No he encontrado una ruta por carretera.");const d=r.distance/1000;routeCache.set(key,d);return d}function friendly(e){const m=String(e?.message||"");return!m||m==="Failed to fetch"||m.includes("NetworkError")?"No he podido conectar con el mapa ahora mismo.":m}
-    async function calculateFromAddresses(){const pickup=fields.pickupAddress.value.trim(),pc=fields.pickupCity.value.trim(),delivery=fields.deliveryAddress.value.trim(),dc=fields.deliveryCity.value.trim(),base=fields.baseAddress.value.trim(),bc=fields.baseCity.value.trim();if(!pickup||!delivery)return{routeSource:"manual"};setStatus("Calculando ruta...");const bp=await geocode(base||"Paseo Independencia 10",bc||"Zaragoza"),pp=await geocode(pickup,pc),dp=await geocode(delivery,dc),empty=await routeDistance(bp,pp),loaded=await routeDistance(pp,dp);fields.emptyKm.value=empty.toFixed(1);fields.loadedKm.value=loaded.toFixed(1);return{routeSource:"map"}}
-    form.addEventListener("submit",async e=>{e.preventDefault();try{const {routeSource}=await calculateFromAddresses();const q=calculateQuote(readInputs());render(q,routeSource);setStatus(routeSource==="map"?"Estimación calculada con ruta por carretera.":"Estimación calculada con kilómetros manuales.")}catch(err){const q=calculateQuote(readInputs());render(q,"manual");setStatus(`${friendly(err)} He usado los kilómetros manuales.`,"error")}});copyQuoteButton.addEventListener("click",async()=>{if(!lastQuote)render(calculateQuote(readInputs()));try{await navigator.clipboard.writeText(buildMessage(lastQuote));setStatus("Resumen copiado.")}catch{setStatus("No se pudo copiar automáticamente. Usa el botón de WhatsApp.","error")}});function updateManual(){render(calculateQuote(readInputs()),"manual")}document.querySelectorAll("input").forEach(i=>{i.addEventListener("input",updateManual);i.addEventListener("change",updateManual)});render(calculateQuote(readInputs()),"manual");if(window.lucide)window.lucide.createIcons();
-  </script>
-</body>
+      </section>
+
+      <section id="estimador" class="estimate-section">
+        <div class="section-heading">
+          <p class="eyebrow">Presupuesto orientativo</p>
+          <h2>Resultado del cálculo</h2>
+        </div>
+
+        <div class="estimate-layout">
+          <article class="result-panel">
+            <div>
+              <p class="muted">Total estimado</p>
+              <output id="totalPrice" class="price">--</output>
+            </div>
+            <div id="routeSummary" class="route-summary">
+              Introduce una ruta o ajusta los kilómetros manualmente.
+            </div>
+            <div class="result-actions">
+              <button id="copyQuote" class="button secondary" type="button">
+                <i data-lucide="copy"></i>
+                Copiar resumen
+              </button>
+              <a id="whatsappLink" class="button ghost" href="https://wa.me/" target="_blank" rel="noopener">
+                <i data-lucide="message-circle"></i>
+                WhatsApp
+              </a>
+            </div>
+          </article>
+
+          <div class="breakdown" aria-label="Desglose de precio">
+            <div>
+              <span>Furgonetas / viajes</span>
+              <strong id="vehicleCount">--</strong>
+            </div>
+            <div>
+              <span>Fecha y hora</span>
+              <strong id="serviceAtOutput">--</strong>
+            </div>
+            <div>
+              <span>Desplazamiento</span>
+              <strong id="emptyCost">--</strong>
+            </div>
+            <div>
+              <span>Recorrido con carga</span>
+              <strong id="loadedCost">--</strong>
+            </div>
+            <div>
+              <span>Carga</span>
+              <strong id="loadCost">--</strong>
+            </div>
+            <div>
+              <span>Descarga</span>
+              <strong id="unloadCost">--</strong>
+            </div>
+            <div>
+              <span>Subida por plantas</span>
+              <strong id="floorCost">--</strong>
+            </div>
+            <div>
+              <span>Tarifa/km por furgoneta</span>
+              <strong id="kmRate">--</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicios" class="services-section">
+        <div class="section-heading">
+          <p class="eyebrow">Servicios</p>
+          <h2>Portes para particulares y negocios</h2>
+        </div>
+
+        <div class="service-grid">
+          <article>
+            <i data-lucide="sofa"></i>
+            <h3>Muebles y electrodomésticos</h3>
+            <p>Recogida en tienda, segunda mano, Wallapop, Milanuncios y entregas a domicilio.</p>
+          </article>
+          <article>
+            <i data-lucide="warehouse"></i>
+            <h3>Obramat, Bauhaus e Ikea</h3>
+            <p>Materiales, paquetes grandes, tableros, cajas y cargas que no caben en coche.</p>
+          </article>
+          <article>
+            <i data-lucide="home"></i>
+            <h3>Pequeñas mudanzas</h3>
+            <p>Habitaciones, estudios, trasteros y cambios de piso. Si supera 15 m³, se calcula otra furgoneta o viaje.</p>
+          </article>
+          <article>
+            <i data-lucide="briefcase-business"></i>
+            <h3>Empresas y profesionales</h3>
+            <p>Rutas recurrentes urbanas e intermunicipales para reformas, inmobiliarias, administradores y comercios locales.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="precios" class="pricing-section">
+        <div class="section-heading">
+          <p class="eyebrow">Modelo de precios</p>
+          <h2>Tarifa clara antes de reservar</h2>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="price-rule">
+            <span>01</span>
+            <h3>Mínimo</h3>
+            <p>Ticket mínimo de 50 euros por furgoneta o viaje. Incluye hasta 200 kg y 5 m³ sin extra de carga o descarga; las plantas se suman aparte.</p>
+          </article>
+          <article class="price-rule">
+            <span>02</span>
+            <h3>Kilómetros</h3>
+            <p>1 euro/km hasta la recogida y recorrido con carga desde 1 euro/km. Se aplica por furgoneta o viaje necesario.</p>
+          </article>
+          <article class="price-rule">
+            <span>03</span>
+            <h3>Ocupación</h3>
+            <p>Desde 5 m³ o 200 kg, el recorrido con carga sube progresivamente hasta 2 euros/km con 15 m³ o 2.000 kg por furgoneta.</p>
+          </article>
+          <article class="price-rule">
+            <span>04</span>
+            <h3>Carga y descarga</h3>
+            <p>Superado el tramo incluido, 20 euros por cada bloque de 100 kg o 3 m³, con tope de 50 euros por operación y furgoneta.</p>
+          </article>
+          <article class="price-rule">
+            <span>05</span>
+            <h3>Plantas</h3>
+            <p>2,50 euros por cada 100 kg y tramo de hasta 3 plantas. Se suma al mínimo si hay que subir o bajar mercancía.</p>
+          </article>
+          <article class="price-rule">
+            <span>06</span>
+            <h3>Confirmación</h3>
+            <p>El importe final depende de ascensor, aparcamiento, esperas, fragilidad y ayuda disponible.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contacto" class="contact-section">
+        <div>
+          <p class="eyebrow">Reserva</p>
+          <h2>Presupuesto listo para enviar</h2>
+          <p>
+            El estimador prepara un resumen con ruta, volumen, carga y extras. Cópialo y envíalo por WhatsApp para confirmar disponibilidad.
+          </p>
+        </div>
+        <a class="button primary" href="#inicio">
+          <i data-lucide="send"></i>
+          Preparar presupuesto
+        </a>
+      </section>
+    </main>
+
+    <footer>
+      <span>Jairo Portes | EbroMove</span>
+      <span>Portes, recogidas y pequeñas mudanzas</span>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
