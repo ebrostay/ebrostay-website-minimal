@@ -9,7 +9,7 @@
       content="Portes, recogidas y pequeñas mudanzas con furgoneta. Calcula una estimación con ruta, fecha, hora, volumen y plantas."
     />
     <link rel="preconnect" href="https://unpkg.com" />
-    <link rel="stylesheet" href="styles.css?v=calendar-local-bookings" />
+    <link rel="stylesheet" href="styles.css?v=google-calendar-bridge" />
   </head>
   <body>
     <header class="site-header">
@@ -252,7 +252,7 @@
 
       <section id="agenda" class="agenda-section">
         <div class="section-heading">
-          <p class="eyebrow">Calendario local</p>
+          <p class="eyebrow">Calendario conectado</p>
           <h2>Horas bloqueadas</h2>
         </div>
 
@@ -260,7 +260,7 @@
           <div class="calendar-head">
             <div>
               <h3>Próximos portes</h3>
-              <p id="calendarStatus" class="form-status" role="status" aria-live="polite">Conectando agenda local...</p>
+              <p id="calendarStatus" class="form-status" role="status" aria-live="polite">Conectando agenda...</p>
             </div>
             <a id="calendarDownload" class="button ghost" href="/api/calendar.ics" hidden>
               <i data-lucide="calendar-days"></i>
@@ -337,7 +337,7 @@
           <article class="price-rule">
             <span>06</span>
             <h3>Agenda</h3>
-            <p>La duración se redondea al cuarto de hora más cercano y se bloquea en la agenda local al reservar.</p>
+            <p>La duración se redondea al cuarto de hora más cercano y se bloquea en la agenda conectada al reservar.</p>
           </article>
         </div>
       </section>
@@ -347,7 +347,7 @@
           <p class="eyebrow">Reserva</p>
           <h2>Presupuesto listo para enviar</h2>
           <p>
-            El estimador prepara un resumen con ruta, volumen, carga y extras. Cópialo y envíalo por WhatsApp para confirmar disponibilidad.
+            El estimador prepara un resumen con ruta, volumen, carga y extras. Reserva la hora o envía el presupuesto por WhatsApp para confirmar detalles.
           </p>
         </div>
         <a class="button primary" href="#inicio">
@@ -363,6 +363,7 @@
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="app.js?v=calendar-local-bookings"></script>
+    <script src="config.js?v=google-calendar-bridge"></script>
+    <script src="app.js?v=google-calendar-bridge"></script>
   </body>
 </html>
