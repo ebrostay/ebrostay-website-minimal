@@ -3,6 +3,6 @@ window.EBROMOVE_CONFIG = {
   bookingApiUseJsonp: true,
   bookingToken: "",
   calendarUrl: "",
-  whatsappPhone: "",
+  whatsappPhone: "41794530967",
   publicSiteUrl: "https://ebrostay.github.io/ebrostay-website-minimal/jairo-portes/"
 };
